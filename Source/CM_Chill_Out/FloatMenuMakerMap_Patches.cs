@@ -20,7 +20,7 @@ namespace CM_Chill_Out
             [HarmonyPostfix]
             public static void Postfix(Vector3 clickPos, Pawn pawn, List<FloatMenuOption> opts)
             {
-                if (pawn.needs == null || pawn.needs.joy == null || pawn.needs.joy.CurLevel > 0.75f)
+                if (pawn.needs == null || pawn.needs.joy == null)
                     return;
 
                 List<JoyGiverDef> joyGiverDefs = DefDatabase<JoyGiverDef>.AllDefsListForReading.Where(joyGiverDef => joyGiverDef.Worker as JoyGiver_InteractBuilding != null).ToList();
@@ -35,18 +35,22 @@ namespace CM_Chill_Out
                         continue;
                     }
 
-                    if (!pawn.CanReach(joyTarget, PathEndMode.OnCell, Danger.Deadly))
-                    {
-                        opts.Add(new FloatMenuOption("CM_Chill_Out_Cannot_Engage".Translate() + " " + joyGiverDef.joyKind.label + ": " + "NoPath".Translate().CapitalizeFirst(), null));
-                    }
-                    else
-                    {
-                        JoyGiver_InteractBuilding interactBuilding = joyGiverDef.Worker as JoyGiver_InteractBuilding;
+                    JoyGiver_InteractBuilding interactBuilding = joyGiverDef.Worker as JoyGiver_InteractBuilding;
 
-                        MethodInfo getPlayJob = interactBuilding.GetType().GetMethod("TryGivePlayJob", BindingFlags.NonPublic | BindingFlags.Instance);
-                        Job joyJob = getPlayJob?.Invoke(interactBuilding, new object[] { pawn, joyTarget.Thing }) as Job;
+                    MethodInfo getPlayJob = interactBuilding.GetType().GetMethod("TryGivePlayJob", BindingFlags.NonPublic | BindingFlags.Instance);
+                    Job joyJob = getPlayJob?.Invoke(interactBuilding, new object[] { pawn, joyTarget.Thing }) as Job;
 
-                        if (joyJob != null)
+                    if (joyJob != null)
+                    {
+                        if (pawn.needs.joy.CurLevel > 0.75f)
+                        {
+                            opts.Add(new FloatMenuOption("CM_Chill_Out_Cannot_Engage".Translate() + " " + joyGiverDef.joyKind.label + ": " + "CM_Chill_Out_Not_Bored".Translate().CapitalizeFirst(), null));
+                        }
+                        else if (!pawn.CanReach(joyTarget, PathEndMode.OnCell, Danger.Deadly))
+                        {
+                            opts.Add(new FloatMenuOption("CM_Chill_Out_Cannot_Engage".Translate() + " " + joyGiverDef.joyKind.label + ": " + "NoPath".Translate().CapitalizeFirst(), null));
+                        }
+                        else
                         {
                             opts.Add(FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption("CM_Chill_Out_Engage".Translate() + " " + joyGiverDef.joyKind.label, delegate
                             {
