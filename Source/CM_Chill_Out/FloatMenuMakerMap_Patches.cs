@@ -26,7 +26,7 @@ namespace CM_Chill_Out
                 List<JoyGiverDef> joyGiverDefs = DefDatabase<JoyGiverDef>.AllDefsListForReading.Where(joyGiverDef => joyGiverDef.Worker as JoyGiver_InteractBuilding != null).ToList();
                 List<ThingDef> joyThingDefs = joyGiverDefs.SelectMany(joyGiverDef => joyGiverDef.thingDefs).ToList();
 
-                foreach (LocalTargetInfo joyTarget in GenUI.TargetsAt_NewTemp(clickPos, ForJoying(pawn, joyThingDefs), thingsOnly: true))
+                foreach (LocalTargetInfo joyTarget in GenUI.TargetsAt(clickPos, ForJoying(pawn, joyThingDefs), thingsOnly: true))
                 {
                     JoyGiverDef joyGiverDef = joyGiverDefs.Find(giverDef => giverDef.thingDefs.Contains(joyTarget.Thing.def));
                     if (joyGiverDef == null)
