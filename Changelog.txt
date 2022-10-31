@@ -1,3 +1,8 @@
+## [1.0.2] - 2021-10-27
+
+### Added
+- Support for RimWorld version 1.4
+
 ## [1.0.1] - 2021-07-23
 
 ### Added
