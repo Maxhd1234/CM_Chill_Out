@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Manifest>
-  <identifier>CaptainMuscles.ChillOut</identifier>
+  <identifier>KB.ChillOut</identifier>
   <version>1.0.2</version>
   <dependencies>
 	<li>Ludeon.RimWorld</li>
@@ -11,5 +11,5 @@
 	<li>brrainz.harmony</li>
   </loadAfter>
   <showCrossPromotions>true</showCrossPromotions>
-  <downloadUri>https://github.com/CaptainMuscles/CM_Chill_Out/releases</downloadUri>
+  <downloadUri>https://github.com/Khorbos/CM_Chill_Out/releases</downloadUri>
 </Manifest>

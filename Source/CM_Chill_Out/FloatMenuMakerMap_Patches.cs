@@ -8,7 +8,7 @@ using RimWorld;
 using Verse;
 using Verse.AI;
 
-namespace CM_Chill_Out
+namespace KB_Chill_Out
 {
     [StaticConstructorOnStartup]
     public static class FloatMenuMakerMap_Patches
@@ -44,15 +44,15 @@ namespace CM_Chill_Out
                     {
                         if (pawn.needs.joy.CurLevel > 0.75f)
                         {
-                            opts.Add(new FloatMenuOption("CM_Chill_Out_Cannot_Engage".Translate() + " " + joyGiverDef.joyKind.label + ": " + "CM_Chill_Out_Not_Bored".Translate().CapitalizeFirst(), null));
+                            opts.Add(new FloatMenuOption("KB_Chill_Out_Cannot_Engage".Translate() + " " + joyGiverDef.joyKind.label + ": " + "KB_Chill_Out_Not_Bored".Translate().CapitalizeFirst(), null));
                         }
                         else if (!pawn.CanReach(joyTarget, PathEndMode.OnCell, Danger.Deadly))
                         {
-                            opts.Add(new FloatMenuOption("CM_Chill_Out_Cannot_Engage".Translate() + " " + joyGiverDef.joyKind.label + ": " + "NoPath".Translate().CapitalizeFirst(), null));
+                            opts.Add(new FloatMenuOption("KB_Chill_Out_Cannot_Engage".Translate() + " " + joyGiverDef.joyKind.label + ": " + "NoPath".Translate().CapitalizeFirst(), null));
                         }
                         else
                         {
-                            opts.Add(FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption("CM_Chill_Out_Engage".Translate() + " " + joyGiverDef.joyKind.label, delegate
+                            opts.Add(FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption("KB_Chill_Out_Engage".Translate() + " " + joyGiverDef.joyKind.label, delegate
                             {
                                 pawn.jobs.TryTakeOrderedJob(joyJob);
                             }, MenuOptionPriority.High), pawn, joyTarget.Thing));

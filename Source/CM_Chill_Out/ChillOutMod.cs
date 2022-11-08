@@ -2,7 +2,7 @@
 using RimWorld;
 using Verse;
 
-namespace CM_Chill_Out
+namespace KB_Chill_Out
 {
     public class ChillOutMod : Mod
     {
@@ -11,7 +11,7 @@ namespace CM_Chill_Out
 
         public ChillOutMod(ModContentPack content) : base(content)
         {
-            var harmony = new Harmony("CM_Chill_Out");
+            var harmony = new Harmony("KB_Chill_Out");
             harmony.PatchAll();
 
             _instance = this;
