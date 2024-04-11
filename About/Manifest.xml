@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Manifest>
   <identifier>KB.ChillOut</identifier>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <dependencies>
 	<li>Ludeon.RimWorld</li>
 	<li>brrainz.harmony</li>
