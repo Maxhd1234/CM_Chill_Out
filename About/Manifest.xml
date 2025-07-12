@@ -1,14 +1,12 @@
-﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+﻿﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Manifest>
   <identifier>MD.ChillOut</identifier>
   <version>1.0.4</version>
   <dependencies>
 	<li>Ludeon.RimWorld</li>
-	<li>brrainz.harmony</li>
   </dependencies>
   <loadAfter>
     <li>Ludeon.RimWorld</li>
-	<li>brrainz.harmony</li>
   </loadAfter>
   <showCrossPromotions>true</showCrossPromotions>
   <downloadUri>https://github.com/Maxhd1234/CM_Chill_Out/releases</downloadUri>
