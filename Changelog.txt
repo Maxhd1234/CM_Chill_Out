@@ -1,3 +1,8 @@
+## [1.0.4] - 2025-07-12
+
+### Added
+- Support for RimWorld version 1.6
+
 ## [1.0.3] - 2024-04-11
 
 ### Added
