@@ -1,3 +1,11 @@
+
+
+## [1.0.5] - 2025-07-12
+
+### Removed
+- Dependency for Harmony
+
+
 ## [1.0.4] - 2025-07-12
 
 ### Added
