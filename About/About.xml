@@ -11,6 +11,12 @@
 		<li>1.5</li>
 		<li>1.6</li>
 	</supportedVersions>
+	<modDependencies>
+		<li>
+			<packageId>brrainz.harmony</packageId>
+			<displayName>Harmony</displayName>
+		</li>
+	</modDependencies>
 	<description>Does your pawn need to take a break, but they just keep on working instead? If you don't enjoy having to juggle work assignments and schedules just to get a pawn to chill out for five g**damn minutes, then this mod is for you.
 	
 This mod adds the ability to command a colonist to engage in certain recreation activities (the ones that involve specific buildings).</description>

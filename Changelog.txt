@@ -1,4 +1,10 @@
+# [1.0.6] - 2025-07-14
 
+## Added
+- Dependency for Harmony
+
+## Fixed
+- Pawns going instantly back to work from Joy Jobs during work hours
 
 ## [1.0.5] - 2025-07-12
 
