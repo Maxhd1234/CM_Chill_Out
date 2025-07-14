@@ -1,7 +1,10 @@
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using HarmonyLib;
 using RimWorld;
+using UnityEngine;
 using Verse;
 using Verse.AI;
 
@@ -41,7 +44,9 @@ public class FloatMenuOptionProvider_ChillOut : FloatMenuOptionProvider
             {
                 continue;
             }
-            if (pawn.needs.joy.CurLevel > 0.75f)
+            joyJob.playerForced = true;
+            joyJob.count = 1337;
+            if (pawn.needs.joy.CurLevel > 0.60f)
             {
                 return new FloatMenuOption(
                     "KB_Chill_Out_Cannot_Engage".Translate() + " " + joyGiverDef.joyKind.label + ": " + "KB_Chill_Out_Not_Bored".Translate().CapitalizeFirst(),
@@ -58,13 +63,33 @@ public class FloatMenuOptionProvider_ChillOut : FloatMenuOptionProvider
             return FloatMenuUtility.DecoratePrioritizedTask(
                 new FloatMenuOption(
                     "KB_Chill_Out_Engage".Translate() + " " + joyGiverDef.joyKind.label,
-                    delegate { pawn.jobs.TryTakeOrderedJob(joyJob, JobTag.Misc); }
+                    delegate
+                    {
+                        pawn.jobs.ClearQueuedJobs();  pawn.jobs.TryTakeOrderedJob(joyJob, tag: JobTag.SatisfyingNeeds);
+                    }, MenuOptionPriority.High
                 ),
                 pawn, joyTarget
+
             );
         }
         return null;
     }
+    [HarmonyPatch(typeof(Pawn_TimetableTracker), "CurrentAssignment", MethodType.Getter)]
+    public static class Patch_CurrentAssignment
+    {
+        public static void Postfix(Pawn_TimetableTracker __instance, ref TimeAssignmentDef __result)
+        {
+            var pawnField = typeof(Pawn_TimetableTracker).GetField("pawn", BindingFlags.Instance | BindingFlags.NonPublic);
+            Pawn pawn = (Pawn)pawnField?.GetValue(__instance);
+            if (__result == TimeAssignmentDefOf.Work && pawn.IsColonist && pawn.CurJob?.count == 1337)
+            {
+                __result = TimeAssignmentDefOf.Joy;
+                pawn.jobs.ClearQueuedJobs();
+            }
+        }
+    }
+
+
 
     private static TargetingParameters ForJoying(Pawn sleeper, List<ThingDef> joyThingDefs)
     {

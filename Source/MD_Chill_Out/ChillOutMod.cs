@@ -1,5 +1,5 @@
+using HarmonyLib;
 using Verse;
-
 
 
 public class ChillOutMod : Mod
@@ -11,6 +11,8 @@ public class ChillOutMod : Mod
     public ChillOutMod(ModContentPack content)
         : base(content)
     {
+        Harmony val = new Harmony("MD.ChillOut");
+        val.PatchAll();
         _instance = this;
     }
 }
