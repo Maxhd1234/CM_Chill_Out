@@ -1,3 +1,8 @@
+# [1.0.8] - 2025-07-20
+
+## Added
+- Chinese translation by Mr. Wolf (摄魂狼)
+
 # [1.0.7] - 2025-07-20
 
 ## Added
