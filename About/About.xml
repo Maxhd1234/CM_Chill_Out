@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
 	<name>Chill the Fork Out</name>
-	<author>Captain Muscles (Nathan Harbour)</author>
+	<authors>
+		<li>Captain Muscles (Original)</li>
+		<li>Khobs</li>
+		<li>Maxhd4321</li>
+	</authors>
 	<packageId>MD.ChillOut</packageId>
 	<url>https://github.com/Maxhd1234/CM_Chill_Out</url>
 	<supportedVersions>

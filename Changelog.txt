@@ -1,3 +1,9 @@
+# [1.0.7] - 2025-07-20
+
+## Added
+- Made translation easier by adding a {0} key which is the joy name
+- German translation by Maxhd4321
+
 # [1.0.6] - 2025-07-14
 
 ## Added
