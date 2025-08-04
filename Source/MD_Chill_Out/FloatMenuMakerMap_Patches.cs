@@ -108,7 +108,7 @@ public class FloatMenuOptionProvider_ChillOut : FloatMenuOptionProvider
         {
             var pawnField = typeof(Pawn_TimetableTracker).GetField("pawn", BindingFlags.Instance | BindingFlags.NonPublic);
             Pawn pawn = (Pawn)pawnField?.GetValue(__instance);
-            if ((__result == TimeAssignmentDefOf.Work && pawn.IsColonist) && (pawn.CurJob?.count == 1337 || pawn.CurJob?.def == JobDefOf.Reading))
+            if ((__result == TimeAssignmentDefOf.Work && pawn.IsColonist) && (pawn.CurJob?.count == 1337 || (pawn.CurJob?.def == JobDefOf.Reading && pawn.CurJob.playerForced)))
             {
                 __result = TimeAssignmentDefOf.Joy;
             }
