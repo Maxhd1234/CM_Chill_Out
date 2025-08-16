@@ -1,4 +1,4 @@
-# [1.0.2] - 2025-08-4
+# [1.0.2] - 2025-08-16
 
 ## Added 
 - The ability to make pawns swim when clicking on water
