@@ -1,12 +1,80 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 using RimWorld;
-using UnityEngine;
+using Unity.Jobs;
 using Verse;
 using Verse.AI;
+
+[StaticConstructorOnStartup]
+
+public class FloatMenuOptionProvider_Swim : FloatMenuOptionProvider
+{
+    protected override bool Drafted => false;
+
+    protected override bool Undrafted => true;
+
+    protected override bool Multiselect => false;
+
+    protected override FloatMenuOption GetSingleOption(FloatMenuContext context)
+    {
+        if (!ModLister.CheckOdyssey("Swimming"))
+        {
+            return null;
+        }
+        Pawn pawn = context.FirstSelectedPawn;
+        if (pawn.needs == null || pawn.needs.joy == null)
+        {
+            return base.GetSingleOption(context);
+        }
+        IntVec3 swimCell = context.ClickedCell;
+        if (!SwimPathFinder.TryFindSwimPath(pawn, swimCell, out var result3))
+        {
+            return null;
+        }
+
+        Job job = JobMaker.MakeJob(JobDefOf.GoSwimming, result3[0]);
+        job.targetQueueA = new List<LocalTargetInfo>();
+        for (int i = 1; i < result3.Count; i++)
+        {
+            job.targetQueueA.Add(result3[i]);
+        }
+        job.locomotionUrgency = LocomotionUrgency.Walk;
+        job.playerForced = true;
+        if (swimCell.GetTerrain(pawn.Map).IsWater)
+        {
+            if (pawn.Map.mapTemperature.OutdoorTemp <= 10f)
+            {
+                return new FloatMenuOption("KB_Chill_Out_Water_Too_Cold".Translate().CapitalizeFirst(),null);
+            }
+            if (!NextDestIsOutdoorsAndNotEnjoyable(pawn.Map, job))
+            {
+                return new FloatMenuOption("KB_Chill_Out_Cannot_Swim".Translate().CapitalizeFirst(), null);
+            }
+            else
+            {
+                return new FloatMenuOption("KB_Chill_Out_Swim".Translate().CapitalizeFirst(), delegate
+                {
+                    pawn.jobs.StartJob(job, JobCondition.InterruptForced, jobGiver: job.jobGiver);
+                }, MenuOptionPriority.High);
+            }
+        }
+        else
+        {
+            return base.GetSingleOption(context);
+        }
+    }
+    bool NextDestIsOutdoorsAndNotEnjoyable(Map map, Job job)
+    {
+        Room room = job.targetA.Cell.GetRoom(map);
+        if (room == null || !room.PsychologicallyOutdoors)
+        {
+            return false;
+        }
+        return true;
+    }
+}
 
 [StaticConstructorOnStartup]
 public class FloatMenuOptionProvider_ChillOut : FloatMenuOptionProvider
@@ -29,7 +97,7 @@ public class FloatMenuOptionProvider_ChillOut : FloatMenuOptionProvider
             .Where(jg => jg.Worker is JoyGiver_InteractBuilding).ToList();
         List<ThingDef> joyThingDefs = list.SelectMany(jg => jg.thingDefs).ToList();
 
-
+        List<JoyGiverDef> totalList = DefDatabase<JoyGiverDef>.AllDefsListForReading;
 
         foreach (LocalTargetInfo joyTarget in GenUI.TargetsAt(thing.DrawPos, ForJoying(pawn, joyThingDefs), thingsOnly: true))
         {
@@ -70,7 +138,7 @@ public class FloatMenuOptionProvider_ChillOut : FloatMenuOptionProvider
 
             if (pawn.needs.joy.CurLevel > 0.60f)
             {
-                    
+
                 return new FloatMenuOption(
 
 
@@ -92,7 +160,7 @@ public class FloatMenuOptionProvider_ChillOut : FloatMenuOptionProvider
                     : "KB_Chill_Out_Engage".Translate().RawText + " " + joyGiverDef.joyKind.label,
                     delegate
                     {
-                        pawn.jobs.ClearQueuedJobs();  pawn.jobs.TryTakeOrderedJob(joyJob, tag: JobTag.SatisfyingNeeds);
+                        pawn.jobs.ClearQueuedJobs(); pawn.jobs.TryTakeOrderedJob(joyJob, tag: JobTag.SatisfyingNeeds);
                     }, MenuOptionPriority.High
                 ),
                 pawn, joyTarget
@@ -101,6 +169,7 @@ public class FloatMenuOptionProvider_ChillOut : FloatMenuOptionProvider
         }
         return base.GetSingleOptionFor(pawn, context);
     }
+
     [HarmonyPatch(typeof(Pawn_TimetableTracker), "CurrentAssignment", MethodType.Getter)]
     public static class Patch_CurrentAssignment
     {
@@ -108,15 +177,14 @@ public class FloatMenuOptionProvider_ChillOut : FloatMenuOptionProvider
         {
             var pawnField = typeof(Pawn_TimetableTracker).GetField("pawn", BindingFlags.Instance | BindingFlags.NonPublic);
             Pawn pawn = (Pawn)pawnField?.GetValue(__instance);
-            if ((__result == TimeAssignmentDefOf.Work && pawn.IsColonist) && (pawn.CurJob?.count == 1337 || (pawn.CurJob?.def == JobDefOf.Reading && pawn.CurJob.playerForced)))
+            if (pawn.CurJob == null)
+                return;
+            if (__result == TimeAssignmentDefOf.Work && pawn != null && pawn.IsColonist && (pawn.CurJob?.count == 1337 || pawn.CurJob?.def == JobDefOf.Reading && pawn.CurJob.playerForced || pawn.CurJob.playerForced && pawn.CurJob?.def == JobDefOf.GoSwimming))
             {
                 __result = TimeAssignmentDefOf.Joy;
             }
         }
     }
-
-
-
 
     private static TargetingParameters ForJoying(Pawn sleeper, List<ThingDef> joyThingDefs)
     {
