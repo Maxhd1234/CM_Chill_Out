@@ -43,7 +43,7 @@ public class FloatMenuOptionProvider_Swim : FloatMenuOptionProvider
             job.playerForced = true;
             if (swimCell.GetTerrain(pawn.Map).IsWater)
             {
-                if (pawn.Map.mapTemperature.OutdoorTemp <= 10f)
+                if (pawn.Map.mapTemperature.OutdoorTemp <= 10f && NextDestIsOutdoorsAndNotEnjoyable(pawn.Map, job))
                 {
                     return new FloatMenuOption("KB_Chill_Out_Water_Too_Cold".Translate().CapitalizeFirst(), null);
                 }
@@ -51,6 +51,7 @@ public class FloatMenuOptionProvider_Swim : FloatMenuOptionProvider
                 {
                     return new FloatMenuOption("KB_Chill_Out_Cannot_Swim".Translate().CapitalizeFirst(), null);
                 }
+
                 else
                 {
                     return new FloatMenuOption("KB_Chill_Out_Swim".Translate().CapitalizeFirst(), delegate
