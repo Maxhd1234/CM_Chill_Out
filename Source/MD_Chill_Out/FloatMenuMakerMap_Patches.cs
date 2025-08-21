@@ -47,7 +47,7 @@ public class FloatMenuOptionProvider_Swim : FloatMenuOptionProvider
                 {
                     return new FloatMenuOption("KB_Chill_Out_Water_Too_Cold".Translate().CapitalizeFirst(), null);
                 }
-                if (!NextDestIsOutdoorsAndNotEnjoyable(pawn.Map, job))
+                if (NextDestIsOutdoorsAndNotEnjoyable(pawn.Map, job))
                 {
                     return new FloatMenuOption("KB_Chill_Out_Cannot_Swim".Translate().CapitalizeFirst(), null);
                 }
@@ -71,12 +71,20 @@ public class FloatMenuOptionProvider_Swim : FloatMenuOptionProvider
     }
     bool NextDestIsOutdoorsAndNotEnjoyable(Map map, Job job)
     {
+        if (map == null)
+        {
+            return false;
+        }
+        if (!job.targetA.IsValid)
+        {
+            return false;
+        }
         Room room = job.targetA.Cell.GetRoom(map);
         if (room == null || !room.PsychologicallyOutdoors)
         {
             return false;
         }
-        return true;
+        return !JoyGiver_GoSwimming.HappyToSwimOutsideOnMap(map);
     }
 }
 

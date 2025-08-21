@@ -1,3 +1,8 @@
+# [1.0.22] - 2025-08-21
+
+## Fixed 
+- My dumb brain misinterpreting the code. Pawns are now able to swim inside.
+
 # [1.0.21] - 2025-08-17
 
 ## Fixed 
