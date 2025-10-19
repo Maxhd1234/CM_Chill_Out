@@ -1,3 +1,8 @@
+# [1.0.23] - 2025-10-19
+
+## Fixed 
+- Whole screen turning red when trying to swim without odyssey activated
+
 # [1.0.22] - 2025-08-21
 
 ## Fixed 

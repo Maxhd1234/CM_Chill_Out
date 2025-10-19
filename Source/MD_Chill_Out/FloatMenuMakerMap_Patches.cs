@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System;
 using System.Reflection;
 using HarmonyLib;
 using RimWorld;
-using Unity.Jobs;
 using Verse;
 using Verse.AI;
 
-[StaticConstructorOnStartup]
 
 public class FloatMenuOptionProvider_Swim : FloatMenuOptionProvider
 {
+
     protected override bool Drafted => false;
 
     protected override bool Undrafted => true;
@@ -19,8 +19,7 @@ public class FloatMenuOptionProvider_Swim : FloatMenuOptionProvider
 
     protected override FloatMenuOption GetSingleOption(FloatMenuContext context)
     {
-
-        if (ModLister.OdysseyInstalled)
+        if (ModsConfig.IsActive("ludeon.rimworld.odyssey") && ModLister.OdysseyInstalled)
         {
             Pawn pawn = context.FirstSelectedPawn;
             if (pawn.needs == null || pawn.needs.joy == null)
