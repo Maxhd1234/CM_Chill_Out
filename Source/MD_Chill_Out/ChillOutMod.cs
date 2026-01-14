@@ -1,6 +1,6 @@
 using HarmonyLib;
+using UnityEngine;
 using Verse;
-
 
 public class ChillOutMod : Mod
 {
@@ -8,11 +8,43 @@ public class ChillOutMod : Mod
 
     public static ChillOutMod Instance => _instance;
 
-    public ChillOutMod(ModContentPack content)
-        : base(content)
+    private readonly ChillOut settings;
+
+    public ChillOut Settings => settings;
+
+    public ChillOutMod(ModContentPack content) : base(content)
     {
-        Harmony val = new Harmony("MD.ChillOut");
-        val.PatchAll();
+        settings = GetSettings<ChillOut>();
+        var harmony = new Harmony("MD.ChillOut");
+        harmony.PatchAll();
         _instance = this;
     }
+
+    public override void DoSettingsWindowContents(Rect inRect)
+    {
+        var listingStandard = new Listing_Standard();
+        listingStandard.Begin(inRect);
+
+        float fckICE2 = settings.fckICE;
+        fckICE2 = listingStandard.SliderLabeled(
+            "Joy threshold: " + fckICE2.ToString("P0"),
+            fckICE2,
+            0f,
+            1f
+        );
+
+        if (!Mathf.Approximately(fckICE2, settings.fckICE))
+        {
+            settings.fckICE = fckICE2;
+        }
+
+        listingStandard.End();
+    }
+
+    public override string SettingsCategory()
+    {
+        return "Chill the Fork Out";
+    }
 }
+
+

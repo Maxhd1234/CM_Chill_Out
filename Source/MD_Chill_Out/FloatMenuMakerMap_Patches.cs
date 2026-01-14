@@ -7,6 +7,18 @@ using RimWorld;
 using Verse;
 using Verse.AI;
 
+[StaticConstructorOnStartup]
+public class ChillOut : ModSettings
+{
+    public float fckICE = 0.6f; 
+
+    public override void ExposeData()
+    {
+        base.ExposeData();
+        Scribe_Values.Look(ref fckICE, "fckICE", 0.5f);
+    }
+}
+
 
 public class FloatMenuOptionProvider_Swim : FloatMenuOptionProvider
 {
@@ -44,16 +56,16 @@ public class FloatMenuOptionProvider_Swim : FloatMenuOptionProvider
             {
                 if (pawn.Map.mapTemperature.OutdoorTemp <= 10f && NextDestIsOutdoorsAndNotEnjoyable(pawn.Map, job))
                 {
-                    return new FloatMenuOption("KB_Chill_Out_Water_Too_Cold".Translate().CapitalizeFirst(), null);
+                    return new FloatMenuOption("KT_Chill_Out_Water_Too_Cold".Translate().CapitalizeFirst(), null);
                 }
                 if (NextDestIsOutdoorsAndNotEnjoyable(pawn.Map, job))
                 {
-                    return new FloatMenuOption("KB_Chill_Out_Cannot_Swim".Translate().CapitalizeFirst(), null);
+                    return new FloatMenuOption("KT_Chill_Out_Cannot_Swim".Translate().CapitalizeFirst(), null);
                 }
 
                 else
                 {
-                    return new FloatMenuOption("KB_Chill_Out_Swim".Translate().CapitalizeFirst(), delegate
+                    return new FloatMenuOption("KT_Chill_Out_Swim".Translate().CapitalizeFirst(), delegate
                     {
                         pawn.jobs.StartJob(job, JobCondition.InterruptForced, jobGiver: job.jobGiver);
                     }, MenuOptionPriority.High);
@@ -114,7 +126,7 @@ public class FloatMenuOptionProvider_ChillOut : FloatMenuOptionProvider
         {
             if (!joyThingDefs.Contains(joyTarget.Thing.def))
             {
-                Log.Warning("joyThingDefs does not contain " + joyTarget.Thing.def);
+                Log.Warning("ChillOut: joyThingDefs does not contain " + joyTarget.Thing.def);
                 continue;
             }
 
@@ -150,7 +162,7 @@ public class FloatMenuOptionProvider_ChillOut : FloatMenuOptionProvider
             joyJob.playerForced = true;
             joyJob.count = 1337;
 
-            if (pawn.needs.joy.CurLevel > 0.60f)
+            if (pawn.needs.joy.CurLevel > LoadedModManager.GetMod<ChillOutMod>().GetSettings<ChillOut>().fckICE)
             {
                 
                 return new FloatMenuOption(
