@@ -1,3 +1,4 @@
+using System;
 using HarmonyLib;
 using UnityEngine;
 using Verse;
@@ -15,7 +16,7 @@ public class ChillOutMod : Mod
     public ChillOutMod(ModContentPack content) : base(content)
     {
         settings = GetSettings<ChillOut>();
-        var harmony = new Harmony("MD.ChillOut");
+        var harmony = new Harmony("KT.ChillOut");
         harmony.PatchAll();
         _instance = this;
     }
@@ -33,11 +34,13 @@ public class ChillOutMod : Mod
             1f
         );
 
+        settings.fckICE = (float)Math.Round(fckICE2, 2);
+        
         if (!Mathf.Approximately(fckICE2, settings.fckICE))
         {
             settings.fckICE = fckICE2;
         }
-
+        
         listingStandard.End();
     }
 

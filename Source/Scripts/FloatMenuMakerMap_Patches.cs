@@ -168,22 +168,22 @@ public class FloatMenuOptionProvider_ChillOut : FloatMenuOptionProvider
                 return new FloatMenuOption(
 
 
-                    "KB_Chill_Out_Cannot_Engage".Translate().RawText.Contains("{0}") ? "KB_Chill_Out_Cannot_Engage".Translate(joyGiverDef.joyKind.label) + ": " + "KB_Chill_Out_Not_Bored".Translate().CapitalizeFirst()
-                    : "KB_Chill_Out_Cannot_Engage".Translate().RawText + " " + joyGiverDef.joyKind.label + ": " + "KB_Chill_Out_Not_Bored".Translate().CapitalizeFirst(),
+                    "KT_Chill_Out_Cannot_Engage".Translate().RawText.Contains("{0}") ? "KT_Chill_Out_Cannot_Engage".Translate(joyGiverDef.joyKind.label) + ": " + "KT_Chill_Out_Not_Bored".Translate().CapitalizeFirst()
+                    : "KT_Chill_Out_Cannot_Engage".Translate().RawText + " " + joyGiverDef.joyKind.label + ": " + "KT_Chill_Out_Not_Bored".Translate().CapitalizeFirst(),
                     null
                 );
             }
             if (!pawn.CanReach(joyTarget, PathEndMode.OnCell, Danger.Deadly))
             {
                 return new FloatMenuOption(
-                    "KB_Chill_Out_Cannot_Engage".Translate() + ": " + "NoPath".Translate().CapitalizeFirst(),
+                    "KT_Chill_Out_Cannot_Engage".Translate() + ": " + "NoPath".Translate().CapitalizeFirst(),
                     null
                 );
             }
             return FloatMenuUtility.DecoratePrioritizedTask(
                 new FloatMenuOption(
-                     "KB_Chill_Out_Engage".Translate().RawText.Contains("{0}") ? "KB_Chill_Out_Engage".Translate(joyGiverDef.joyKind.label)
-                    : "KB_Chill_Out_Engage".Translate().RawText + " " + joyGiverDef.joyKind.label,
+                     "KT_Chill_Out_Engage".Translate().RawText.Contains("{0}") ? "KT_Chill_Out_Engage".Translate(joyGiverDef.joyKind.label)
+                    : "KT_Chill_Out_Engage".Translate().RawText + " " + joyGiverDef.joyKind.label,
                     delegate
                     {
                         pawn.jobs.ClearQueuedJobs(); pawn.jobs.TryTakeOrderedJob(joyJob, tag: JobTag.SatisfyingNeeds);
