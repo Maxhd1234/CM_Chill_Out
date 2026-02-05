@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System;
 using System.Reflection;
 using HarmonyLib;
 using RimWorld;
@@ -10,7 +9,7 @@ using Verse.AI;
 [StaticConstructorOnStartup]
 public class ChillOut : ModSettings
 {
-    public float fckICE = 0.6f; 
+    public float fckICE = 0.6f;
 
     public override void ExposeData()
     {
@@ -160,11 +159,11 @@ public class FloatMenuOptionProvider_ChillOut : FloatMenuOptionProvider
                 continue;
             }
             joyJob.playerForced = true;
-            joyJob.count = 1337;
+            joyJob.count = 756559690;
 
             if (pawn.needs.joy.CurLevel > LoadedModManager.GetMod<ChillOutMod>().GetSettings<ChillOut>().fckICE)
             {
-                
+
                 return new FloatMenuOption(
 
 
@@ -197,6 +196,7 @@ public class FloatMenuOptionProvider_ChillOut : FloatMenuOptionProvider
     }
 
     [HarmonyPatch(typeof(Pawn_TimetableTracker), "CurrentAssignment", MethodType.Getter)]
+    [HarmonyPriority(Priority.Last)]
     public static class Patch_CurrentAssignment
     {
         public static void Postfix(Pawn_TimetableTracker __instance, ref TimeAssignmentDef __result)
@@ -205,9 +205,37 @@ public class FloatMenuOptionProvider_ChillOut : FloatMenuOptionProvider
             Pawn pawn = (Pawn)pawnField?.GetValue(__instance);
             if (pawn.CurJob == null)
                 return;
-            if (__result == TimeAssignmentDefOf.Work && pawn != null && pawn.IsColonist && (pawn.CurJob?.count == 1337 || pawn.CurJob?.def == JobDefOf.Reading && pawn.CurJob.playerForced || !ModLister.OdysseyInstalled ? (pawn.CurJob.playerForced && pawn.CurJob?.def == JobDefOf.GoSwimming) : false))
+            if (__result == TimeAssignmentDefOf.Work || __result == TimeAssignmentDefOf.Anything)
             {
-                __result = TimeAssignmentDefOf.Joy;
+                if (pawn != null && pawn.IsColonistPlayerControlled)
+                {
+                    if (ModLister.OdysseyInstalled)
+                    {
+                        if (pawn.CurJob?.count == 756559690	)
+                        {
+                            __result = TimeAssignmentDefOf.Joy;
+                        }
+                        else if (pawn.CurJob?.def == JobDefOf.GoSwimming && pawn.CurJob.playerForced)
+                        {
+                            __result = TimeAssignmentDefOf.Joy;
+                        }
+                        else if (pawn.CurJob?.def == JobDefOf.Reading && pawn.CurJob.playerForced)
+                        {
+                            __result = TimeAssignmentDefOf.Joy;
+                        }
+                    }
+                    else
+                    {
+                        if (pawn.CurJob?.count == 756559690)
+                        {
+                            __result = TimeAssignmentDefOf.Joy;
+                        }
+                        else if (pawn.CurJob?.def == JobDefOf.Reading && pawn.CurJob.playerForced)
+                        {
+                            __result = TimeAssignmentDefOf.Joy;
+                        }
+                    }
+                }
             }
         }
     }
@@ -220,7 +248,7 @@ public class FloatMenuOptionProvider_ChillOut : FloatMenuOptionProvider
             canTargetBuildings = true,
             mapObjectTargetsMustBeAutoAttackable = false,
 
-           validator = (TargetInfo targ) => targ.HasThing && joyThingDefs.Contains(targ.Thing.def)
+            validator = (TargetInfo targ) => targ.HasThing && joyThingDefs.Contains(targ.Thing.def)
         };
     }
 

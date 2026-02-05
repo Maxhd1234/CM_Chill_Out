@@ -1,3 +1,8 @@
+# [1.0.44] - 2026-02-05
+
+## Fixed 
+- Pawns instantly leaving. Pawns will still leave after a while if they have joyed enough or get bored.
+
 # [1.0.43] - 2026-02-03
 
 ## Changed 

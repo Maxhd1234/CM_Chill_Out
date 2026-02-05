@@ -35,12 +35,12 @@ public class ChillOutMod : Mod
         );
 
         settings.fckICE = (float)Math.Round(fckICE2, 2);
-        
+
         if (!Mathf.Approximately(fckICE2, settings.fckICE))
         {
             settings.fckICE = fckICE2;
         }
-        
+
         listingStandard.End();
     }
 
