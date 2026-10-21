@@ -6,7 +6,7 @@ using RimWorld;
 using Verse;
 using Verse.AI;
 
-[StaticConstructorOnStartup]
+
 public class ChillOut : ModSettings
 {
     public float fckICE = 0.6f;
