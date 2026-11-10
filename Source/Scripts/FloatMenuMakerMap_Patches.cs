@@ -120,136 +120,118 @@ public class FloatMenuOptionProvider_ChillOut : FloatMenuOptionProvider
         List<JoyGiverDef> list = DefDatabase<JoyGiverDef>.AllDefsListForReading
             .Where(jg => jg.Worker is JoyGiver_InteractBuilding).ToList();
         List<ThingDef> joyThingDefs = list.SelectMany(jg => jg.thingDefs).ToList();
+        JoyGiverDef joyGiverDef = list.Find(gd => gd.thingDefs != null && gd.thingDefs.Contains(thing.def));
 
-        foreach (LocalTargetInfo joyTarget in GenUI.TargetsAt(thing.DrawPos, ForJoying(joyThingDefs)))
+        if (joyGiverDef == null) return null;
+
+        LocalTargetInfo joyTarget = thing;
+
+        if (!joyThingDefs.Contains(joyTarget.Thing.def))
         {
-            if (!joyThingDefs.Contains(joyTarget.Thing.def))
-            {
-                Log.Warning("ChillOut: joyThingDefs does not contain " + joyTarget.Thing.def);
-                continue;
-            }
-
-            JoyGiverDef joyGiverDef = list.Find(gd => gd.thingDefs.Contains(joyTarget.Thing.def));
-
-            if (joyGiverDef == null)
-            {
-                Log.Warning("ChillOut: Could not find JoyGiverDef for " + joyTarget.Thing.def.defName + ", this should not be possible...");
-                continue;
-            }
-
-            JoyGiver_InteractBuilding joyGiver_InteractBuilding = joyGiverDef.Worker as JoyGiver_InteractBuilding;
-            if (joyGiver_InteractBuilding == null)
-            {
-                Log.Warning("ChillOut: JoyGiverDef.Worker is not of type JoyGiver_InteractBuilding for " + joyGiverDef.defName);
-                continue;
-            }
+            Log.Warning("ChillOut: joyThingDefs does not contain " + joyTarget.Thing.def);
+            return null;
+        }
 
 
-            var tryGivePlayJobMethod = joyGiver_InteractBuilding.GetType()
-                .GetMethod("TryGivePlayJob", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            if (tryGivePlayJobMethod == null)
-            {
-                Log.Warning("ChillOut: Didnt find method TryGivePlayJob_" + joyGiver_InteractBuilding);
-                continue;
-            }
-
-            Job joyJob = tryGivePlayJobMethod.Invoke(joyGiver_InteractBuilding, new object[2] { pawn, joyTarget.Thing }) as Job;
-            if (joyJob == null)
-            {
-                continue;
-            }
-            joyJob.playerForced = true;
-            joyJob.count = 756559690;
-
-            if (pawn.needs.joy.CurLevel > LoadedModManager.GetMod<ChillOutMod>().GetSettings<ChillOut>().fckICE)
-            {
-
-                return new FloatMenuOption(
+        JoyGiver_InteractBuilding joyGiver_InteractBuilding = joyGiverDef.Worker as JoyGiver_InteractBuilding;
+        if (joyGiver_InteractBuilding == null)
+        {
+            Log.Warning("ChillOut: JoyGiverDef.Worker is not of type JoyGiver_InteractBuilding for " + joyGiverDef.defName);
+            return null;
+        }
 
 
-                    "KT_Chill_Out_Cannot_Engage".Translate().RawText.Contains("{0}") ? "KT_Chill_Out_Cannot_Engage".Translate(joyGiverDef.joyKind.label) + ": " + "KT_Chill_Out_Not_Bored".Translate().CapitalizeFirst()
-                    : "KT_Chill_Out_Cannot_Engage".Translate().RawText + " " + joyGiverDef.joyKind.label + ": " + "KT_Chill_Out_Not_Bored".Translate().CapitalizeFirst(),
-                    null
-                );
-            }
-            if (!pawn.CanReach(joyTarget, PathEndMode.OnCell, Danger.Deadly))
-            {
-                return new FloatMenuOption(
-                    "KT_Chill_Out_Cannot_Engage".Translate() + ": " + "NoPath".Translate().CapitalizeFirst(),
-                    null
-                );
-            }
-            return FloatMenuUtility.DecoratePrioritizedTask(
-                new FloatMenuOption(
-                     "KT_Chill_Out_Engage".Translate().RawText.Contains("{0}") ? "KT_Chill_Out_Engage".Translate(joyGiverDef.joyKind.label)
-                    : "KT_Chill_Out_Engage".Translate().RawText + " " + joyGiverDef.joyKind.label,
-                    delegate
-                    {
-                        pawn.jobs.ClearQueuedJobs(); pawn.jobs.TryTakeOrderedJob(joyJob, tag: JobTag.SatisfyingNeeds);
-                    }, MenuOptionPriority.High
-                ),
-                pawn, joyTarget
+        var tryGivePlayJobMethod = joyGiver_InteractBuilding.GetType()
+            .GetMethod("TryGivePlayJob", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+        if (tryGivePlayJobMethod == null)
+        {
+            Log.Warning("ChillOut: Didnt find method TryGivePlayJob_" + joyGiver_InteractBuilding);
+            return null;
+        }
 
+        Job joyJob = tryGivePlayJobMethod.Invoke(joyGiver_InteractBuilding, new object[2] { pawn, joyTarget.Thing }) as Job;
+        if (joyJob == null)
+        {
+            return null;
+        }
+        joyJob.playerForced = true;
+        joyJob.count = 756559690;
+
+        if (pawn.needs.joy.CurLevel > LoadedModManager.GetMod<ChillOutMod>().GetSettings<ChillOut>().fckICE)
+        {
+
+            return new FloatMenuOption(
+
+
+                "KT_Chill_Out_Cannot_Engage".Translate().RawText.Contains("{0}") ? "KT_Chill_Out_Cannot_Engage".Translate(joyGiverDef.joyKind.label) + ": " + "KT_Chill_Out_Not_Bored".Translate().CapitalizeFirst()
+                : "KT_Chill_Out_Cannot_Engage".Translate().RawText + " " + joyGiverDef.joyKind.label + ": " + "KT_Chill_Out_Not_Bored".Translate().CapitalizeFirst(),
+                null
             );
         }
-        return base.GetSingleOptionFor(pawn, context);
-    }
-
-    [HarmonyPatch(typeof(Pawn_TimetableTracker), "CurrentAssignment", MethodType.Getter)]
-    [HarmonyPriority(Priority.Last)]
-    public static class Patch_CurrentAssignment
-    {
-        public static void Postfix(Pawn_TimetableTracker __instance, ref TimeAssignmentDef __result)
+        if (!pawn.CanReach(joyTarget, PathEndMode.OnCell, Danger.Deadly))
         {
-            var pawnField = typeof(Pawn_TimetableTracker).GetField("pawn", BindingFlags.Instance | BindingFlags.NonPublic);
-            Pawn pawn = (Pawn)pawnField?.GetValue(__instance);
-            if (pawn.CurJob == null)
-                return;
-            if (__result == TimeAssignmentDefOf.Work || __result == TimeAssignmentDefOf.Anything)
-            {
-                if (pawn != null && pawn.IsColonistPlayerControlled)
+            return new FloatMenuOption(
+                "KT_Chill_Out_Cannot_Engage".Translate() + ": " + "NoPath".Translate().CapitalizeFirst(),
+                null
+            );
+        }
+        return FloatMenuUtility.DecoratePrioritizedTask(
+            new FloatMenuOption(
+                 "KT_Chill_Out_Engage".Translate().RawText.Contains("{0}") ? "KT_Chill_Out_Engage".Translate(joyGiverDef.joyKind.label)
+                : "KT_Chill_Out_Engage".Translate().RawText + " " + joyGiverDef.joyKind.label,
+                delegate
                 {
-                    if (ModLister.OdysseyInstalled)
+                    pawn.jobs.ClearQueuedJobs(); pawn.jobs.TryTakeOrderedJob(joyJob, tag: JobTag.SatisfyingNeeds);
+                }, MenuOptionPriority.High
+            ),
+            pawn, joyTarget
+
+        );
+    }
+}
+
+[HarmonyPatch(typeof(Pawn_TimetableTracker), "CurrentAssignment", MethodType.Getter)]
+[HarmonyPriority(Priority.Last)]
+public static class Patch_CurrentAssignment
+{
+    public static void Postfix(Pawn_TimetableTracker __instance, ref TimeAssignmentDef __result)
+    {
+        var pawnField = typeof(Pawn_TimetableTracker).GetField("pawn", BindingFlags.Instance | BindingFlags.NonPublic);
+        Pawn pawn = (Pawn)pawnField?.GetValue(__instance);
+        if (pawn.CurJob == null)
+            return;
+        if (__result == TimeAssignmentDefOf.Work || __result == TimeAssignmentDefOf.Anything)
+        {
+            if (pawn != null && pawn.IsColonistPlayerControlled)
+            {
+                if (ModLister.OdysseyInstalled)
+                {
+                    if (pawn.CurJob?.count == 756559690)
                     {
-                        if (pawn.CurJob?.count == 756559690	)
-                        {
-                            __result = TimeAssignmentDefOf.Joy;
-                        }
-                        else if (pawn.CurJob?.def == JobDefOf.GoSwimming && pawn.CurJob.playerForced)
-                        {
-                            __result = TimeAssignmentDefOf.Joy;
-                        }
-                        else if (pawn.CurJob?.def == JobDefOf.Reading && pawn.CurJob.playerForced)
-                        {
-                            __result = TimeAssignmentDefOf.Joy;
-                        }
+                        __result = TimeAssignmentDefOf.Joy;
                     }
-                    else
+                    else if (pawn.CurJob?.def == JobDefOf.GoSwimming && pawn.CurJob.playerForced)
                     {
-                        if (pawn.CurJob?.count == 756559690)
-                        {
-                            __result = TimeAssignmentDefOf.Joy;
-                        }
-                        else if (pawn.CurJob?.def == JobDefOf.Reading && pawn.CurJob.playerForced)
-                        {
-                            __result = TimeAssignmentDefOf.Joy;
-                        }
+                        __result = TimeAssignmentDefOf.Joy;
+                    }
+                    else if (pawn.CurJob?.def == JobDefOf.Reading && pawn.CurJob.playerForced)
+                    {
+                        __result = TimeAssignmentDefOf.Joy;
+                    }
+                }
+                else
+                {
+                    if (pawn.CurJob?.count == 756559690)
+                    {
+                        __result = TimeAssignmentDefOf.Joy;
+                    }
+                    else if (pawn.CurJob?.def == JobDefOf.Reading && pawn.CurJob.playerForced)
+                    {
+                        __result = TimeAssignmentDefOf.Joy;
                     }
                 }
             }
         }
     }
-
-    private static TargetingParameters ForJoying(List<ThingDef> joyThingDefs)
-    {
-        return new TargetingParameters
-        {
-            canTargetPawns = false,
-            canTargetBuildings = true,
-            mapObjectTargetsMustBeAutoAttackable = false,
-
-            validator = (TargetInfo targ) => targ.HasThing && joyThingDefs.Contains(targ.Thing.def)
-        };
-    }
-
 }
+

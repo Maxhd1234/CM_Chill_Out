@@ -1,3 +1,8 @@
+# [1.0.6] - 2026-10-11
+
+## Fixed 
+- Joy object appearing twice in Floating Menu when another object is in the same cell
+
 # [1.0.54] - 2026-02-09
 
 ## Added 
